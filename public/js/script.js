@@ -147,12 +147,6 @@ window.addEventListener("load", () => {
 // ================= INTERACTIVE PROJECTS =================
 const filterButtons = document.querySelectorAll(".filter-btn");
 const projectCards = document.querySelectorAll(".premium-project-card");
-const projectModal = document.getElementById("projectModal");
-const closeModal = document.getElementById("closeModal");
-const modalIcon = document.getElementById("modalIcon");
-const modalTitle = document.getElementById("modalTitle");
-const modalDescription = document.getElementById("modalDescription");
-const modalTech = document.getElementById("modalTech");
 
 // Filter projects
 filterButtons.forEach((button) => {
@@ -192,39 +186,9 @@ projectCards.forEach((card) => {
     card.style.transform = "rotateX(0deg) rotateY(0deg) translateY(0) scale(1)";
   });
 
-  card.addEventListener("click", (e) => {
-    if (e.target.tagName.toLowerCase() === "a") return;
+  
 
-    const icon = card.querySelector(".project-icon").textContent;
-    const title = card.querySelector("h3").textContent;
-    const description = card.querySelector("p").textContent;
-    const techItems = card.querySelectorAll(".project-tech span");
 
-    modalIcon.textContent = icon;
-    modalTitle.textContent = title;
-    modalDescription.textContent = description;
-
-    modalTech.innerHTML = "";
-    techItems.forEach((item) => {
-      const span = document.createElement("span");
-      span.textContent = item.textContent;
-      modalTech.appendChild(span);
-    });
-
-    projectModal.classList.add("active");
-  });
-});
-
-// Close modal
-closeModal.addEventListener("click", () => {
-  projectModal.classList.remove("active");
-});
-
-projectModal.addEventListener("click", (e) => {
-  if (e.target === projectModal) {
-    projectModal.classList.remove("active");
-  }
-});
 
 contactForm.addEventListener("submit", async (e) => {
   e.preventDefault();
