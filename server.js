@@ -19,10 +19,17 @@ app.post("/send-email", async (req, res) => {
   const { name, email, subject, message } = req.body;
 
   try {
-    const { error } = await resend.emails.send({
+    if (!process.env.RESEND_API_KEY) {
+      return res.status(500).json({
+        success: false,
+        message: "Missing RESEND_API_KEY in Render environment variables",
+      });
+    }
+
+    const { data, error } = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
       to: ["egijoefranmorales123@gmail.com"],
-      subject: `Portfolio Contact: ${subject}`,
+      subject: `Portfolio Contact: ${subject || "No Subject"}`,
       replyTo: email,
       html: `
         <h3>New Message from Portfolio</h3>
@@ -34,15 +41,27 @@ app.post("/send-email", async (req, res) => {
       `,
     });
 
+    console.log("RESEND DATA:", data);
+    console.log("RESEND ERROR:", error);
+
     if (error) {
-      console.error(error);
-      return res.status(500).json({ success: false });
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Resend failed to send email",
+      });
     }
 
-    res.json({ success: true });
+    res.json({
+      success: true,
+      message: "Message sent successfully!",
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+    console.error("SERVER EMAIL ERROR:", err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message || "Server failed to send email",
+    });
   }
 });
 

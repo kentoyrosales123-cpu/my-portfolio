@@ -253,7 +253,7 @@ contactForm.addEventListener("submit", async (e) => {
       formMessage.textContent = "✅ Message sent successfully!";
       contactForm.reset();
     } else {
-      formMessage.textContent = "❌ Failed to send message.";
+      formMessage.textContent = result.message || "❌ Failed to send message.";
     }
   } catch (err) {
     formMessage.textContent = "❌ Error sending message.";
