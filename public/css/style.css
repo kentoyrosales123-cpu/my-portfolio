@@ -835,7 +835,7 @@ body {
   width: min(1200px, 92%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 26px;
   position: relative;
   z-index: 2;
