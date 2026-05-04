@@ -185,10 +185,7 @@ projectCards.forEach((card) => {
   card.addEventListener("mouseleave", () => {
     card.style.transform = "rotateX(0deg) rotateY(0deg) translateY(0) scale(1)";
   });
-
-  
-
-
+});
 
 contactForm.addEventListener("submit", async (e) => {
   e.preventDefault();
