@@ -1,24 +1,9 @@
-// ================= NAVIGATION =================
-const menuBtn = document.getElementById("menuBtn");
-const navLinks = document.getElementById("navLinks");
-
-menuBtn.addEventListener("click", () => {
-  navLinks.classList.toggle("active");
-});
-
-document.querySelectorAll(".nav-links a").forEach((link) => {
-  link.addEventListener("click", () => {
-    navLinks.classList.remove("active");
-  });
-});
-
-// ================= CONTACT FORM =================
+// ================= SAFE ELEMENTS =================
 const contactForm = document.getElementById("contactForm");
 const formMessage = document.getElementById("formMessage");
 
-// ================= ROTATING TYPING EFFECT =================
+// ================= TYPING EFFECT =================
 const roles = ["Full-Stack Developer", "Engineer", "Educator", "Researcher"];
-
 const typingText = document.getElementById("typing-text");
 
 let roleIndex = 0;
@@ -26,6 +11,8 @@ let charIndex = 0;
 let isDeleting = false;
 
 function typeRole() {
+  if (!typingText) return;
+
   const currentRole = roles[roleIndex];
 
   if (!isDeleting) {
@@ -34,7 +21,7 @@ function typeRole() {
 
     if (charIndex === currentRole.length) {
       isDeleting = true;
-      setTimeout(typeRole, 1500); // pause before deleting
+      setTimeout(typeRole, 1400);
       return;
     }
   } else {
@@ -50,9 +37,97 @@ function typeRole() {
   setTimeout(typeRole, isDeleting ? 40 : 80);
 }
 
-// Start animation when page loads
 window.addEventListener("load", typeRole);
-// ================= PARALLAX MOUSE EFFECT =================
+
+const allSections = document.querySelectorAll(".hero, .section");
+const allNavLinks = document.querySelectorAll(".nav a");
+
+function showOnlySection(targetId) {
+  allSections.forEach((section) => {
+    section.classList.remove("active");
+  });
+
+  allNavLinks.forEach((link) => {
+    link.classList.remove("active");
+  });
+
+  const targetSection = document.querySelector(targetId);
+  const activeLink = document.querySelector(`.nav a[href="${targetId}"]`);
+
+  if (targetSection) targetSection.classList.add("active");
+  if (activeLink) activeLink.classList.add("active");
+}
+
+allNavLinks.forEach((link) => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const targetId = link.getAttribute("href");
+    showOnlySection(targetId);
+  });
+});
+
+document.querySelectorAll(".hero-buttons a").forEach((button) => {
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const targetId = button.getAttribute("href");
+    showOnlySection(targetId);
+  });
+});
+
+window.addEventListener("load", () => {
+  showOnlySection("#home");
+});
+
+// ================= ACTIVE NAV ON SCROLL =================
+const sections = document.querySelectorAll("section[id]");
+const headerLinks = document.querySelectorAll(".nav a");
+
+window.addEventListener("scroll", () => {
+  let current = "";
+
+  sections.forEach((section) => {
+    const sectionTop = section.offsetTop - 120;
+
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute("id");
+    }
+  });
+
+  headerLinks.forEach((link) => {
+    link.classList.remove("active");
+
+    if (link.getAttribute("href") === `#${current}`) {
+      link.classList.add("active");
+    }
+  });
+});
+
+// ================= SCROLL REVEAL TRANSITIONS =================
+const revealElements = document.querySelectorAll(
+  ".section-title, .section-subtitle, .about-card, .skill-card, .premium-project-card, .service-card, .contact-info, .contact-form",
+);
+
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+      }
+    });
+  },
+  {
+    threshold: 0.15,
+  },
+);
+
+revealElements.forEach((el) => {
+  el.classList.add("reveal");
+  revealObserver.observe(el);
+});
+
+// ================= PARALLAX HERO =================
 const hero = document.querySelector(".hero");
 const glassCard = document.querySelector(".glass-card");
 const shape1 = document.querySelector(".shape-1");
@@ -60,20 +135,17 @@ const shape2 = document.querySelector(".shape-2");
 
 if (hero && glassCard && shape1 && shape2) {
   hero.addEventListener("mousemove", (e) => {
-    const heroRect = hero.getBoundingClientRect();
+    const rect = hero.getBoundingClientRect();
 
-    const x = e.clientX - heroRect.left;
-    const y = e.clientY - heroRect.top;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    const centerX = heroRect.width / 2;
-    const centerY = heroRect.height / 2;
+    const moveX = (x - rect.width / 2) / rect.width;
+    const moveY = (y - rect.height / 2) / rect.height;
 
-    const moveX = (x - centerX) / centerX;
-    const moveY = (y - centerY) / centerY;
-
-    glassCard.style.transform = `translate(${moveX * 18}px, ${moveY * 18}px)`;
-    shape1.style.transform = `translate(${moveX * -35}px, ${moveY * -35}px)`;
-    shape2.style.transform = `translate(${moveX * 35}px, ${moveY * 35}px)`;
+    glassCard.style.transform = `translate(${moveX * 25}px, ${moveY * 25}px)`;
+    shape1.style.transform = `translate(${moveX * -40}px, ${moveY * -40}px)`;
+    shape2.style.transform = `translate(${moveX * 40}px, ${moveY * 40}px)`;
   });
 
   hero.addEventListener("mouseleave", () => {
@@ -82,93 +154,46 @@ if (hero && glassCard && shape1 && shape2) {
     shape2.style.transform = "translate(0, 0)";
   });
 }
-// ================= SINGLE SECTION VIEW =================
-const sections = document.querySelectorAll(".section, .hero");
-const navLinksAll = document.querySelectorAll(".nav-links a");
 
-// ================= PRO TRANSITION NAV =================
-let currentSection = null;
-
-function showSection(id) {
-  const nextSection = document.querySelector(id);
-
-  if (!nextSection) return;
-
-  // First load
-  if (!currentSection) {
-    nextSection.classList.add("active");
-    currentSection = nextSection;
-    return;
-  }
-
-  if (nextSection === currentSection) return;
-
-  const allSections = document.querySelectorAll(".section, .hero");
-
-  const currentIndex = [...allSections].indexOf(currentSection);
-  const nextIndex = [...allSections].indexOf(nextSection);
-
-  const exitClass = nextIndex > currentIndex ? "exit-left" : "exit-right";
-
-  currentSection.classList.add(exitClass);
-
-  setTimeout(() => {
-    currentSection.classList.remove("active", "exit-left", "exit-right");
-
-    nextSection.classList.add("active");
-    currentSection = nextSection;
-  }, 400);
-}
-
-// handle navbar click
-navLinksAll.forEach((link) => {
-  link.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    const targetId = link.getAttribute("href");
-    showSection(targetId);
-  });
-});
-
-// handle hero buttons click
-document.querySelectorAll(".hero-buttons a").forEach((button) => {
-  button.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    const targetId = button.getAttribute("href");
-    showSection(targetId);
-  });
-});
-
-// show HOME by default
-window.addEventListener("load", () => {
-  showSection("#home");
-});
-// ================= INTERACTIVE PROJECTS =================
+// ================= APPLE-LEVEL FILTER =================
 const filterButtons = document.querySelectorAll(".filter-btn");
-const projectCards = document.querySelectorAll(".premium-project-card");
+const projectCards = Array.from(
+  document.querySelectorAll(".premium-project-card"),
+);
 
-// Filter projects
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    const filter = button.dataset.filter;
+
     filterButtons.forEach((btn) => btn.classList.remove("active"));
     button.classList.add("active");
 
-    const filter = button.dataset.filter;
+    const first = projectCards.map((c) => c.getBoundingClientRect());
 
     projectCards.forEach((card) => {
-      const category = card.dataset.category;
+      const show = filter === "all" || card.dataset.category === filter;
 
-      if (filter === "all" || filter === category) {
-        card.classList.remove("hide");
-      } else {
-        card.classList.add("hide");
-      }
+      card.classList.toggle("hide", !show);
+    });
+
+    requestAnimationFrame(() => {
+      const last = projectCards.map((c) => c.getBoundingClientRect());
+
+      projectCards.forEach((card, i) => {
+        const dx = first[i].left - last[i].left;
+        const dy = first[i].top - last[i].top;
+
+        card.style.transform = `translate(${dx}px, ${dy}px)`;
+
+        requestAnimationFrame(() => {
+          card.style.transform = "";
+        });
+      });
     });
   });
 });
 
-// 3D hover tilt + modal open
+// ================= 3D TILT + LIGHT =================
 projectCards.forEach((card) => {
   card.addEventListener("mousemove", (e) => {
     const rect = card.getBoundingClientRect();
@@ -176,47 +201,81 @@ projectCards.forEach((card) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const rotateX = ((y - rect.height / 2) / rect.height) * -10;
-    const rotateY = ((x - rect.width / 2) / rect.width) * 10;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-12px) scale(1.02)`;
+    const rotateX = ((y - centerY) / centerY) * -6;
+    const rotateY = ((x - centerX) / centerX) * 6;
+
+    card.style.transform = `
+      rotateX(${rotateX}deg)
+      rotateY(${rotateY}deg)
+      scale(1.03)
+    `;
+
+    // light follow
+    card.style.setProperty("--x", `${x}px`);
+    card.style.setProperty("--y", `${y}px`);
   });
 
   card.addEventListener("mouseleave", () => {
-    card.style.transform = "rotateX(0deg) rotateY(0deg) translateY(0) scale(1)";
+    card.style.transform = "rotateX(0) rotateY(0) scale(1)";
   });
 });
 
-contactForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// ================= PROJECT CARD TILT =================
+projectCards.forEach((card) => {
+  card.addEventListener("mousemove", (e) => {
+    const rect = card.getBoundingClientRect();
 
-  const formData = new FormData(contactForm);
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-  const data = {
-    name: formData.get("name"),
-    email: formData.get("email"),
-    subject: formData.get("subject"),
-    message: formData.get("message"),
-  };
+    const rotateX = ((y - rect.height / 2) / rect.height) * -8;
+    const rotateY = ((x - rect.width / 2) / rect.width) * 8;
 
-  try {
-    const res = await fetch("/send-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+  });
 
-    const result = await res.json();
-
-    if (result.success) {
-      formMessage.textContent = "✅ Message sent successfully!";
-      contactForm.reset();
-    } else {
-      formMessage.textContent = result.message || "❌ Failed to send message.";
-    }
-  } catch (err) {
-    formMessage.textContent = "❌ Error sending message.";
-  }
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "rotateX(0) rotateY(0) translateY(0)";
+  });
 });
+
+// ================= CONTACT FORM =================
+if (contactForm && formMessage) {
+  contactForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(contactForm);
+
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      subject: formData.get("subject"),
+      message: formData.get("message"),
+    };
+
+    try {
+      const res = await fetch("/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        formMessage.textContent = "✅ Message sent successfully!";
+        contactForm.reset();
+      } else {
+        formMessage.textContent =
+          result.message || "❌ Failed to send message.";
+      }
+    } catch (err) {
+      formMessage.textContent = "❌ Error sending message.";
+    }
+  });
+}
