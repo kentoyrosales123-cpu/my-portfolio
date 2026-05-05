@@ -1,11 +1,11 @@
+require("dotenv").config();
+
 const express = require("express");
 const path = require("path");
 const { Resend } = require("resend");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -22,9 +22,11 @@ app.post("/send-email", async (req, res) => {
     if (!process.env.RESEND_API_KEY) {
       return res.status(500).json({
         success: false,
-        message: "Missing RESEND_API_KEY in Render environment variables",
+        message: "Missing RESEND_API_KEY in .env file",
       });
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     const { data, error } = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
@@ -41,13 +43,10 @@ app.post("/send-email", async (req, res) => {
       `,
     });
 
-    console.log("RESEND DATA:", data);
-    console.log("RESEND ERROR:", error);
-
     if (error) {
       return res.status(500).json({
         success: false,
-        message: error.message || "Resend failed to send email",
+        message: error.message || "Failed to send email",
       });
     }
 
@@ -56,15 +55,16 @@ app.post("/send-email", async (req, res) => {
       message: "Message sent successfully!",
     });
   } catch (err) {
-    console.error("SERVER EMAIL ERROR:", err);
+    console.error(err);
 
     res.status(500).json({
       success: false,
-      message: err.message || "Server failed to send email",
+      message: "Server error",
     });
   }
 });
 
+// ✅ THIS MUST BE OUTSIDE
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

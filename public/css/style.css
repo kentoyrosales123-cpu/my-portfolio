@@ -989,7 +989,28 @@ body {
   cursor: pointer;
 }
 
+.premium-project-card {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.premium-project-card {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 0.4s ease;
+}
+
 .premium-project-card.hide {
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+}
+
+/* NEW: fully hide AFTER animation */
+.premium-project-card.hidden {
   display: none;
 }
 
