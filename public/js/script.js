@@ -156,39 +156,34 @@ if (hero && glassCard && shape1 && shape2) {
 }
 
 // ================= APPLE-LEVEL FILTER =================
+// ================= PROJECT FILTER =================
 const filterButtons = document.querySelectorAll(".filter-btn");
-const projectCards = Array.from(
-  document.querySelectorAll(".premium-project-card"),
-);
+const projectCards = document.querySelectorAll(".premium-project-card");
 
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const filter = button.dataset.filter;
 
+    // active button
     filterButtons.forEach((btn) => btn.classList.remove("active"));
     button.classList.add("active");
 
-    const first = projectCards.map((c) => c.getBoundingClientRect());
-
     projectCards.forEach((card) => {
-      const show = filter === "all" || card.dataset.category === filter;
+      const category = card.dataset.category;
 
-      card.classList.toggle("hide", !show);
-    });
+      if (filter === "all" || category === filter) {
+        card.classList.remove("hide");
 
-    requestAnimationFrame(() => {
-      const last = projectCards.map((c) => c.getBoundingClientRect());
+        setTimeout(() => {
+          card.style.display = "flex";
+        }, 10);
+      } else {
+        card.classList.add("hide");
 
-      projectCards.forEach((card, i) => {
-        const dx = first[i].left - last[i].left;
-        const dy = first[i].top - last[i].top;
-
-        card.style.transform = `translate(${dx}px, ${dy}px)`;
-
-        requestAnimationFrame(() => {
-          card.style.transform = "";
-        });
-      });
+        setTimeout(() => {
+          card.style.display = "none";
+        }, 300);
+      }
     });
   });
 });
