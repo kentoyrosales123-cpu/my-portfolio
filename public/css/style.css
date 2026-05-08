@@ -986,3 +986,19 @@ body {
     min-height: auto;
   }
 }
+
+.project-card {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease,
+    filter 0.45s ease;
+}
+
+.project-card.hide {
+  opacity: 0;
+  transform: scale(0.92) translateY(20px);
+  filter: blur(6px);
+  pointer-events: none;
+}

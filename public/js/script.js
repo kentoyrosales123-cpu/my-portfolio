@@ -158,31 +158,34 @@ if (hero && glassCard && shape1 && shape2) {
 // ================= APPLE-LEVEL FILTER =================
 // ================= PROJECT FILTER =================
 const filterButtons = document.querySelectorAll(".filter-btn");
-const projectCards = document.querySelectorAll(".premium-project-card");
+const projectCards = document.querySelectorAll(".project-card");
 
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    const filter = button.dataset.filter;
-
-    // active button
     filterButtons.forEach((btn) => btn.classList.remove("active"));
     button.classList.add("active");
 
-    projectCards.forEach((card) => {
+    const filter = button.dataset.filter;
+
+    projectCards.forEach((card, index) => {
       const category = card.dataset.category;
 
-      if (filter === "all" || category === filter) {
-        card.classList.remove("hide");
+      const shouldShow = filter === "all" || category === filter;
 
+      if (shouldShow) {
         setTimeout(() => {
-          card.style.display = "flex";
-        }, 10);
+          card.style.display = "block";
+
+          requestAnimationFrame(() => {
+            card.classList.remove("hide");
+          });
+        }, index * 60);
       } else {
         card.classList.add("hide");
 
         setTimeout(() => {
           card.style.display = "none";
-        }, 300);
+        }, 450);
       }
     });
   });
