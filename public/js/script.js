@@ -6,6 +6,24 @@ const formMessage = document.getElementById("formMessage");
 const roles = ["Full-Stack Developer", "Engineer", "Educator", "Researcher"];
 const typingText = document.getElementById("typing-text");
 
+const menuBtn = document.getElementById("menuBtn");
+const mobileNav = document.getElementById("mobileNav");
+
+if (menuBtn && mobileNav) {
+  menuBtn.addEventListener("click", () => {
+    mobileNav.classList.toggle("open");
+
+    menuBtn.textContent = mobileNav.classList.contains("open") ? "✕" : "☰";
+  });
+
+  mobileNav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      mobileNav.classList.remove("open");
+      menuBtn.textContent = "☰";
+    });
+  });
+}
+
 let roleIndex = 0;
 let charIndex = 0;
 let isDeleting = false;
